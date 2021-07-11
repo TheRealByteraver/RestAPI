@@ -9,7 +9,6 @@ exports.authenticateUser = async (req, res, next) => {
 
   // Parse the user's credentials from the Authorization header.
   const credentials = auth(req);
-  console.log('credentials: ', credentials);
 
   // If the user's credentials are available...
      // Attempt to retrieve the user from the data store
@@ -38,12 +37,14 @@ exports.authenticateUser = async (req, res, next) => {
         // so any middleware functions that follow this middleware function
         // will have access to the user's information.
       if (authenticated) {
-        console.log(`Authentication successful for username: ${user.username}`);
+        // console.log(`Authentication successful for username: ${user.username}`);
+        console.log(`Authentication successful for username: ${user.emailAddress}`);
 
         // Store the user on the Request object.
         req.currentUser = user; // create 'currentUser' key and assign it 'user'
       } else {
-        message = `Authentication failure for username: ${user.username}`;
+        // message = `Authentication failure for username: ${user.username}`;
+        message = `Authentication failure for username: ${user.emailAddress}`;
       }
     } else {
       message = `User not found for username: ${credentials.name}`;

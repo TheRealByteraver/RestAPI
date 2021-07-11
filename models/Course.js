@@ -36,27 +36,27 @@ module.exports = (sequelize) => {
     },
     estimatedTime: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'An estimatedTime is required'
-        },
-        notEmpty: {
-          msg: 'Please provide an estimatedTime'
-        }
-      }
+      // allowNull: false,
+      // validate: {
+      //   notNull: {
+      //     msg: 'An estimatedTime is required'
+      //   },
+      //   notEmpty: {
+      //     msg: 'Please provide an estimatedTime'
+      //   }
+      // }
     },
     materialsNeeded: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'A materialsNeeded is required'
-        },
-        notEmpty: {
-          msg: 'Please provide a materialsNeeded'
-        }
-      }
+      // allowNull: false,
+      // validate: {
+      //   notNull: {
+      //     msg: 'A materialsNeeded is required'
+      //   },
+      //   notEmpty: {
+      //     msg: 'Please provide a materialsNeeded'
+      //   }
+      // }
     }
   }, { sequelize });
 
@@ -67,7 +67,7 @@ module.exports = (sequelize) => {
     Course.belongsTo(models.User, { 
       as: 'courseUser', // alias
       foreignKey: {
-        fieldName: 'courseUserId',
+        fieldName: 'userId',
         allowNull: false
       }
     });

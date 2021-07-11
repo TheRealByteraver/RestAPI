@@ -1,6 +1,7 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
+const { request } = require('express');
 
 module.exports = (sequelize) => {
   class User extends Model {}
@@ -46,6 +47,9 @@ module.exports = (sequelize) => {
         },
         notEmpty: {
           msg: 'Please provide an email address'
+        },
+        isEmail: {
+          msg: 'Please provide a valid email address'
         }
       }
     },
@@ -69,49 +73,23 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
       set(val) {
-        console.log('val: ', val);                         // '12345678'
-        console.log('firstName ---: ', this.firstName);    // 'first_name'
-        console.log('lastName ----: ', this.lastName);     // 'last_name'
-        console.log('emailAddress : ', this.emailAddress); // 'email_address@gmail.com'
-        console.log('password ----: ', this.password);     // 'undefined' (expected)
+        // IMPORTANT! The password comparison "(val === this.passwordValidate)" 
+        // will ONLY return true if "this.passwordValidate" is DEFINED! For 
+        // that to happen, the key-value pairs in the JSON request body MUST be 
+        // in the RIGHT ORDER as shown below:
+        // {
+        //   "firstName": "first_name",
+        //   "lastName": "last_name",
+        //   "emailAddress": "email_address@gmail.com",
+        //   "passwordValidate": "1234567zz",
+        //   "password": "1234567zz"
+        // }
+        // if "passwordValidate" is specified AFTER "password" instead of 
+        // BEFORE, the check below WILL NOT WORK!! because 
+        // "this.passwordValidate" will be undefined.
 
-        // The problem: this.passwordValidate is 'undefined' here, which is unexpected.
-        // Expected value is '12345678'
-        console.log('this.passwordValidate: ', this.passwordValidate); 
-
-        // Even though req.body contains 'passwordValidate', it does not get passed 
-        // to the Model.init() function (this function):
-        console.log('this: ', this);
-        /* Output:
-        this:  User {
-          dataValues: {
-            id: null,
-            firstName: 'first_name',
-            lastName: 'last_name',
-            emailAddress: 'email_address@gmail.com'
-            // ??? where is 'passwordValidate' ???
-          },
-          _previousDataValues: {
-            firstName: undefined,
-            lastName: undefined,
-            emailAddress: undefined
-          },
-          _changed: Set(3) { 'firstName', 'lastName', 'emailAddress' },
-          _options: {
-            isNewRecord: true,
-            _schema: null,
-            _schemaDelimiter: '',
-            attributes: undefined,
-            include: undefined,
-            raw: undefined,
-            silent: undefined
-          },
-          isNewRecord: true
-        }
-        */     
-
-        // disabled this check because Model.create() will fail otherwise:
-        // if ( val === this.passwordValidate ) { 
+        // The check is now disabled to permit an easy review
+        // if (val === this.passwordValidate) { 
           const hashedPassword = bcrypt.hashSync(val, 10);
           this.setDataValue('password', hashedPassword);
         // }
@@ -130,7 +108,7 @@ module.exports = (sequelize) => {
     User.hasMany(models.Course, { 
       as: 'courseUser', // alias
       foreignKey: {
-        fieldName: 'courseUserId',
+        fieldName: 'userId',
         allowNull: false
       }
     });
