@@ -4,7 +4,6 @@ const express = require('express');
 const { asyncHandler } = require('./middleware/async-handler');
 const { User, Course } = require('./models');
 const { authenticateUser } = require('./middleware/auth-user');
-// const auth = require('basic-auth');
 
 // Construct a router instance.
 const router = express.Router();
@@ -34,6 +33,7 @@ function filterCourseData(courseData) {
   delete course["updatedAt"];
   delete course.courseUser["createdAt"];
   delete course.courseUser["updatedAt"];
+  delete course.courseUser["password"];
   return course;
 }
 // ****************************************************************************
