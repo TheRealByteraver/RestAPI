@@ -1,6 +1,5 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
-// const bcrypt = require('bcrypt');
 
 module.exports = (sequelize) => {
   class Course extends Model {}
@@ -36,27 +35,9 @@ module.exports = (sequelize) => {
     },
     estimatedTime: {
       type: DataTypes.STRING,
-      // allowNull: false,
-      // validate: {
-      //   notNull: {
-      //     msg: 'An estimatedTime is required'
-      //   },
-      //   notEmpty: {
-      //     msg: 'Please provide an estimatedTime'
-      //   }
-      // }
     },
     materialsNeeded: {
       type: DataTypes.STRING,
-      // allowNull: false,
-      // validate: {
-      //   notNull: {
-      //     msg: 'A materialsNeeded is required'
-      //   },
-      //   notEmpty: {
-      //     msg: 'Please provide a materialsNeeded'
-      //   }
-      // }
     }
   }, { sequelize });
 

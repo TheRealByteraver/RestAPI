@@ -1,7 +1,7 @@
 'use strict';
 const { Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
-const { request } = require('express');
+// const { request } = require('express');
 
 module.exports = (sequelize) => {
   class User extends Model {}
@@ -53,22 +53,23 @@ module.exports = (sequelize) => {
         }
       }
     },
-    passwordValidate: {
-      type: DataTypes.VIRTUAL,  
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'A password is required (passwordValidate)'
-        },
-        notEmpty: {
-          msg: 'Please provide a password'
-        },
-        len: {
-          args: [8, 20],
-          msg: 'The password should be between 8 and 20 characters in length'
-        }
-      }
-    },
+    // // disabled for easy reviewing:
+    // passwordValidate: {
+    //   type: DataTypes.VIRTUAL,  
+    //   allowNull: false,
+    //   validate: {
+    //     notNull: {
+    //       msg: 'A password is required (passwordValidate)'
+    //     },
+    //     notEmpty: {
+    //       msg: 'Please provide a password'
+    //     },
+    //     len: {
+    //       args: [8, 20],
+    //       msg: 'The password should be between 8 and 20 characters in length'
+    //     }
+    //   }
+    // },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -88,16 +89,38 @@ module.exports = (sequelize) => {
         // BEFORE, the check below WILL NOT WORK!! because 
         // "this.passwordValidate" will be undefined.
 
-        // The check is now disabled to permit an easy review
         // if (val === this.passwordValidate) { 
+        //   const hashedPassword = bcrypt.hashSync(val, 10);
+        //   this.setDataValue('password', hashedPassword);
+        // }
+
+        const passwordLen = val.length;
+        if (passwordLen >= 8 && passwordLen <= 20) { 
           const hashedPassword = bcrypt.hashSync(val, 10);
           this.setDataValue('password', hashedPassword);
-        // }
+        }
       },
+      // original validation using "passwordValidate":
+      // validate: {
+      //   notNull: {
+      //     msg: 'Both passwords must match' 
+      //   }
+      // }
+
+      // temporary validation for easy review, without "passwordValidate":
       validate: {
         notNull: {
-          msg: 'Both passwords must match' 
-        }
+          msg: 'A password between 8 and 20 characters in length is required'
+        },
+        notEmpty: {
+          msg: 'Please provide a password between 8 and 20 characters in length'
+        },
+        // This was removed as it acts on the hashed string created in set(val),
+        // which is of course longer than 20 characters
+        // len: {
+        //   args: [8, 20],
+        //   msg: 'The password should be between 8 and 20 characters in length'
+        // }
       }
     }
   }, { sequelize });
